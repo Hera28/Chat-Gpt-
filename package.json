@@ -1,0 +1,15 @@
+{
+  "name": "marvel-ai-clone",
+  "version": "1.0.0",
+  "description": "Marvel Edmund Kumaat AI Clone",
+  "main": "index.js",
+  "dependencies": {
+    "whatsapp-web.js": "^1.23.0",
+    "qrcode-terminal": "^0.12.0",
+    "@google/generative-ai": "^0.1.0",
+    "puppeteer": "^21.0.0"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
