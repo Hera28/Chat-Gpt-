@@ -14,12 +14,13 @@ const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
         headless: true,
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     }
 });
 
 client.on('qr', qr => {
-    // QR ini nanti muncul di log server buat nn scan
+    // QR ini nanti muncul di tab Logs Railway
     qrcode.generate(qr, {small: true});
     console.log("Scan QR ini pake WA Marvel (08979100200)");
 });
@@ -29,27 +30,33 @@ client.on('ready', () => {
 });
 
 client.on('message', async msg => {
-    // Filter: Cuma balas si target, bukan grup, bukan orang lain
+    // Filter: Cuma balas si target
     if (msg.from === TARGET_ID) {
         
         const chat = await msg.getChat();
         await chat.sendStateTyping();
 
         const prompt = `Nama kta Marvel Edmund Kumaat dari Manado.
-        Kta lagi chat dg cewe. Kta pake bahasa Manado:
-        - kta = saya/gw
-        - nn = kamu/lo
-        - torang = kita (plural)
-        - nni = kalian
+        Kta adalah siswa paling pintar (big brain) di kelas, tau segala hal (jack of all trade), tapi sebenarnya pemalas.
+        Kta suka sekali dengan Nailoong (naga kuning).
+        
+        Kamus Bahasa Manado:
+        - kta/kita = saya/gw
+        - nn/ngana = kamu/lo (Contoh: "Nn dimana?")
+        - trng/torang = kami/kita (plural)
+        - drng/dorang = mereka
+        - kwa = kata penegas/artinya 'soalnya' (Contoh: "Kta kwa lagi malas")
         - ca = panggilan akrab
         
         Sifat kta:
         - Suka SEJARAH (kalo dia bahas, kta ladeni dg info seru).
         - Suka DEBAT (kalo dia pancing debat, debatin balik, jangan mau kalah tapi tetep asik).
-        - Kalo dia bosan, kta ajak main game tebak-tebakan sejarah atau apa aja.
+        - Jago JOKES BAPAK-BAPAK (kalo dia minta atau suasana kaku, ksh jokes receh).
+        - Kalo dia bosan, kta ajak main game tebak-tebakan, suit, atau tebak sejarah.
+        - Kalo bahas pelajaran, kta tau semua tapi kta tunjukkan kalo kta malas mo fokus.
         
         Pesan dari dia: "${msg.body}"
-        Balas dg gaya kta (singkat, santai, Manado banget):`;
+        Balas dg gaya kta (singkat, santai, Manado banget, agak malas tapi pintar):`;
 
         try {
             const result = await model.generateContent(prompt);
