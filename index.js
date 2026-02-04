@@ -1,5 +1,4 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // Setup AI Gemini
@@ -19,10 +18,11 @@ const client = new Client({
     }
 });
 
-client.on('qr', qr => {
-    // QR ini nanti muncul di tab Logs Railway
-    qrcode.generate(qr, {small: true});
-    console.log("Scan QR ini pake WA Marvel (08979100200)");
+// --- FITUR PAIRING CODE (PENGGANTI QR) ---
+client.on('qr', async () => {
+    // Railway bakal minta kode pairing ke nomor Marvel
+    const pairingCode = await client.requestPairingCode('628979100200'); 
+    console.log('--- KODE PAIRING WA NN: ' + pairingCode + ' ---');
 });
 
 client.on('ready', () => {
@@ -32,7 +32,6 @@ client.on('ready', () => {
 client.on('message', async msg => {
     // Filter: Cuma balas si target
     if (msg.from === TARGET_ID) {
-        
         const chat = await msg.getChat();
         await chat.sendStateTyping();
 
@@ -61,8 +60,6 @@ client.on('message', async msg => {
         try {
             const result = await model.generateContent(prompt);
             const response = result.response.text();
-
-            // Delay biar ndak kayak bot (7-12 detik)
             const delay = Math.floor(Math.random() * (12000 - 7000) + 7000);
             
             setTimeout(async () => {
